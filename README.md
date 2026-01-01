@@ -33,7 +33,7 @@ The Retrieval-Augmented Generation pipeline processes user queries through the f
 
 ## Document Ingestion Flow
 
-![Document Ingestion Flow](/ingestion-flow.png)
+![Document Ingestion Flow](/Ingestion-Flow.png)
 
 ## Quick Start
 
