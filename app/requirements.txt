@@ -1,0 +1,36 @@
+# CropTAP RAG Dependencies
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Configuration
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+python-dotenv>=1.0.0
+
+# Vector Database
+chromadb>=0.4.18
+
+# Embeddings
+sentence-transformers>=2.2.2
+torch>=2.0.0
+
+# LLM
+openai>=1.3.0
+tiktoken>=0.5.0
+
+# PDF Processing
+PyMuPDF>=1.23.0
+
+# Text Processing
+langchain-text-splitters>=0.0.1
+
+# Logging
+loguru>=0.7.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+httpx>=0.25.0
