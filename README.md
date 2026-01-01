@@ -110,26 +110,26 @@ curl -X POST http://localhost:8000/api/v1/query \
 
 ```json
 {
-  "answer": "To grow bananas successfully, follow these key steps:\n\n1. **Site Selection**: Choose a location with full sunlight and well-drained soil. Bananas prefer slightly acidic soil with pH 5.5-7.0.\n\n2. **Planting**: Use suckers or tissue-cultured plantlets. Plant in holes 30cm deep and 30cm wide, spaced 2-3 meters apart.\n\n3. **Watering**: Bananas need consistent moisture. Water regularly, especially during dry periods. Avoid waterlogging.\n\n4. **Fertilization**: Apply organic matter and complete fertilizer (14-14-14) every 2-3 months.\n\n5. **Maintenance**: Remove dead leaves and excess suckers. Support heavy bunches with props.\n\n6. **Harvesting**: Harvest when fingers are plump and ridges rounded, typically 75-80 days after flowering.\n\nSource: Banana Production Guide",
-  "sources": [
-    {
-      "content": "Banana requires a warm and humid climate. It grows best in areas with temperatures ranging from 25-30°C...",
-      "source": "C:\\data\\raw\\crop_production_guide\\Banana-Production-Guide.pdf",
-      "category": "crop_production_guide",
-      "filename": "Banana-Production-Guide.pdf",
-      "score": 0.8234
-    },
-    {
-      "content": "Planting materials include sword suckers, water suckers, and tissue-cultured plantlets...",
-      "source": "C:\\data\\raw\\crop_production_guide\\Banana-Production-Guide.pdf",
-      "category": "crop_production_guide",
-      "filename": "Banana-Production-Guide.pdf",
-      "score": 0.7891
-    }
-  ],
-  "question": "How do I grow bananas?",
-  "category_filter": null,
-  "documents_retrieved": 3
+	"answer": "To grow bananas successfully, follow these key steps:\n\n1. **Site Selection**: Choose a location with full sunlight and well-drained soil. Bananas prefer slightly acidic soil with pH 5.5-7.0.\n\n2. **Planting**: Use suckers or tissue-cultured plantlets. Plant in holes 30cm deep and 30cm wide, spaced 2-3 meters apart.\n\n3. **Watering**: Bananas need consistent moisture. Water regularly, especially during dry periods. Avoid waterlogging.\n\n4. **Fertilization**: Apply organic matter and complete fertilizer (14-14-14) every 2-3 months.\n\n5. **Maintenance**: Remove dead leaves and excess suckers. Support heavy bunches with props.\n\n6. **Harvesting**: Harvest when fingers are plump and ridges rounded, typically 75-80 days after flowering.\n\nSource: Banana Production Guide",
+	"sources": [
+		{
+			"content": "Banana requires a warm and humid climate. It grows best in areas with temperatures ranging from 25-30°C...",
+			"source": "C:\\data\\raw\\crop_production_guide\\Banana-Production-Guide.pdf",
+			"category": "crop_production_guide",
+			"filename": "Banana-Production-Guide.pdf",
+			"score": 0.8234
+		},
+		{
+			"content": "Planting materials include sword suckers, water suckers, and tissue-cultured plantlets...",
+			"source": "C:\\data\\raw\\crop_production_guide\\Banana-Production-Guide.pdf",
+			"category": "crop_production_guide",
+			"filename": "Banana-Production-Guide.pdf",
+			"score": 0.7891
+		}
+	],
+	"question": "How do I grow bananas?",
+	"category_filter": null,
+	"documents_retrieved": 3
 }
 ```
 
@@ -168,6 +168,38 @@ croptap-rag/
 - **Embeddings**: `sentence-transformers` (all-MiniLM-L6-v2)
 - **LLM**: Ollama (`llama3.2`)
 - **PDF Processing**: PyMuPDF
+
+## Future Release
+
+### Integration with Crop Recommender System
+
+This RAG system will be integrated with the [Crop Recommender System](https://github.com/meruuuuooo/crop-recommender-system-using-data-driven-algorithm) — a data-driven algorithm that recommends optimal crops based on soil properties, climate data, and agricultural conditions.
+
+#### Planned Integration Features
+
+| Feature                        | Description                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| **Contextual Recommendations** | Enhance crop recommendations with detailed production guides and best practices      |
+| **Interactive Q&A**            | Allow farmers to ask follow-up questions about recommended crops                     |
+| **Soil-Specific Advice**       | Provide planting tips tailored to specific soil conditions from the soil data corpus |
+| **Statistical Insights**       | Include historical yield data and production statistics for recommended crops        |
+
+#### Integration Architecture
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                    CropTAP Platform                         │
+├─────────────────────────┬───────────────────────────────────┤
+│  Crop Recommender       │         CropTAP RAG              │
+│  (Data-Driven Algorithm)│    (Knowledge Assistant)          │
+├─────────────────────────┼───────────────────────────────────┤
+│  • Soil analysis        │  • Production guides              │
+│  • Climate matching     │  • Planting tips                  │
+│  • Yield prediction     │  • Statistical data               │
+│  • Crop ranking         │  • Expert Q&A                     │
+└─────────────────────────┴───────────────────────────────────┘
+```
+
 
 ## License
 
