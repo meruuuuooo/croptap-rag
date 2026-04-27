@@ -13,8 +13,17 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
+    # LLM Provider Configuration
+    llm_provider: str = "auto"  # auto, openai, or ollama
+
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434/v1"
+
+    # OpenAI Configuration
+    openai_api_key: str = ""
+    openai_chat_model: str = "gpt-4o-mini"
+    openai_base_url: str | None = None
+    openai_verify_ssl: bool = True
     
     # Paths
     base_dir: Path = Path(__file__).parent.parent
@@ -27,7 +36,7 @@ class Settings(BaseSettings):
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     embedding_dimension: int = 384
     
-    # LLM Configuration (Ollama)
+    # LLM Configuration
     llm_model: str = "llama3.2"  # or qwen2.5, mistral, gemma2, etc.
     llm_temperature: float = 0.1
     llm_max_tokens: int = 1024
@@ -48,7 +57,7 @@ class Settings(BaseSettings):
     api_description: str = "Agricultural Knowledge Retrieval API"
     
     class Config:
-        env_file = ".env"
+        env_file = (".env", "app/.env")
         env_file_encoding = "utf-8"
         extra = "ignore"
 

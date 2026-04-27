@@ -1,13 +1,14 @@
 """
 LLM Client Module
 
-Client for Ollama local LLM using OpenAI-compatible API.
+Client for OpenAI and Ollama using OpenAI-compatible API.
 """
 
 import sys
 from pathlib import Path
 from typing import Optional
 
+import httpx
 from openai import OpenAI
 from loguru import logger
 
@@ -19,11 +20,12 @@ from app.config import settings
 
 class LLMClient:
     """
-    Ollama LLM client using OpenAI-compatible API.
+    LLM client for OpenAI or Ollama.
     """
     
     def __init__(
         self,
+        provider: Optional[str] = None,
         base_url: Optional[str] = None,
         model: Optional[str] = None
     ):
@@ -31,19 +33,48 @@ class LLMClient:
         Initialize the LLM client.
         
         Args:
-            base_url: Ollama API base URL.
+            provider: LLM provider (openai, ollama, or auto).
+            base_url: Optional API base URL override.
             model: Model name to use.
         """
-        self.base_url = base_url or settings.ollama_base_url
-        self.model = model or settings.llm_model
-        
-        # Ollama doesn't need an API key, but OpenAI client requires one
-        self.client = OpenAI(
-            base_url=self.base_url,
-            api_key="ollama"  # Dummy key, Ollama ignores this
+        configured_provider = (provider or settings.llm_provider or "auto").strip().lower()
+        if configured_provider == "auto":
+            configured_provider = "openai" if settings.openai_api_key.strip() else "ollama"
+
+        if configured_provider not in {"openai", "ollama"}:
+            raise ValueError(
+                f"Unsupported LLM provider: {configured_provider}. "
+                "Use one of: openai, ollama, auto."
+            )
+
+        self.provider = configured_provider
+
+        if self.provider == "openai":
+            if not settings.openai_api_key.strip():
+                raise ValueError(
+                    "OPENAI_API_KEY is required when provider is 'openai'."
+                )
+
+            self.base_url = base_url or settings.openai_base_url
+            self.model = model or settings.openai_chat_model
+            self.client = OpenAI(
+                api_key=settings.openai_api_key,
+                base_url=self.base_url,
+                http_client=httpx.Client(verify=settings.openai_verify_ssl)
+            )
+        else:
+            self.base_url = base_url or settings.ollama_base_url
+            self.model = model or settings.llm_model
+            # Ollama doesn't need an API key, but OpenAI client requires one
+            self.client = OpenAI(
+                base_url=self.base_url,
+                api_key="ollama"  # Dummy key, Ollama ignores this
+            )
+
+        logger.info(
+            f"Initialized LLM client: provider={self.provider}, "
+            f"base_url={self.base_url}, model={self.model}"
         )
-        
-        logger.info(f"Initialized Ollama client: {self.base_url}, model: {self.model}")
     
     def generate(
         self,
@@ -83,13 +114,20 @@ class LLMClient:
             
         except Exception as e:
             logger.error(f"LLM generation error: {e}")
-            
-            # Check if Ollama is running
-            if "Connection refused" in str(e) or "connect" in str(e).lower():
+
+            # Provider-specific connection errors
+            if self.provider == "ollama" and (
+                "Connection refused" in str(e) or "connect" in str(e).lower()
+            ):
                 return (
                     "Error: Cannot connect to Ollama. "
                     "Please ensure Ollama is running with: `ollama serve`"
                 )
+
+            if self.provider == "openai" and (
+                "401" in str(e) or "api key" in str(e).lower()
+            ):
+                return "Error: OpenAI authentication failed. Check OPENAI_API_KEY."
             
             return f"Error generating response: {str(e)}"
     
@@ -129,7 +167,7 @@ class LLMClient:
             return False
     
     def list_models(self) -> list[str]:
-        """List available Ollama models."""
+        """List available models from the configured provider."""
         try:
             response = self.client.models.list()
             return [model.id for model in response.data]

@@ -1,12 +1,12 @@
 # CropTAP RAG
 
-A Retrieval-Augmented Generation (RAG) system for Philippine agricultural knowledge. Ask questions about crop production, planting tips, statistics, and soil data — powered by local LLM (Ollama).
+A Retrieval-Augmented Generation (RAG) system for Philippine agricultural knowledge. Ask questions about crop production, planting tips, statistics, and soil data — powered by OpenAI or local LLM (Ollama).
 
 ## Features
 
 - **PDF Document Ingestion** - Automatically extracts and indexes PDF documents
 - **Semantic Search** - Find relevant information using natural language
-- **Local LLM** - Uses Ollama for privacy-friendly, offline AI responses
+- **Flexible LLM Provider** - Use OpenAI API or Ollama (local)
 - **Category Filtering** - Filter by crop guides, statistics, planting tips, or soil data
 - **FastAPI Backend** - RESTful API with interactive docs
 
@@ -28,7 +28,7 @@ The Retrieval-Augmented Generation pipeline processes user queries through the f
 | 2    | **Vector Search** | Find similar document chunks in ChromaDB                    |
 | 3    | **Build Context** | Combine retrieved chunks with source metadata               |
 | 4    | **Create Prompt** | Format system + context + question for LLM                  |
-| 5    | **Generate**      | Ollama generates grounded response                          |
+| 5    | **Generate**      | OpenAI or Ollama generates grounded response                |
 | 6    | **Return**        | Response with cited sources                                 |
 
 ## Document Ingestion Flow
@@ -40,7 +40,7 @@ The Retrieval-Augmented Generation pipeline processes user queries through the f
 ### Prerequisites
 
 - Python 3.11+
-- [Ollama](https://ollama.com/download) installed and running
+- OpenAI API key or [Ollama](https://ollama.com/download) installed and running
 
 ### Installation
 
@@ -56,7 +56,7 @@ source .venv/Scripts/activate  # Windows
 # Install dependencies
 pip install -r app/requirements.txt
 
-# Pull an LLM model
+# Optional (for Ollama only): pull a local model
 ollama pull llama3.2
 ```
 
@@ -68,7 +68,11 @@ Copy the environment template:
 cp app/.env.example app/.env
 ```
 
-Default settings work out of the box with Ollama.
+Set your provider in `app/.env`:
+
+- For OpenAI: set `OPENAI_API_KEY` and `OPENAI_CHAT_MODEL` (default: `gpt-4o-mini`)
+- For Ollama: set `LLM_PROVIDER=ollama`, `OLLAMA_BASE_URL`, and `LLM_MODEL`
+- For auto-detection: keep `LLM_PROVIDER=auto` (uses OpenAI when `OPENAI_API_KEY` is present)
 
 ### Ingest Documents
 
@@ -166,7 +170,7 @@ croptap-rag/
 - **Framework**: FastAPI
 - **Vector DB**: ChromaDB
 - **Embeddings**: `sentence-transformers` (all-MiniLM-L6-v2)
-- **LLM**: Ollama (`llama3.2`)
+- **LLM**: OpenAI (`gpt-4o-mini`) or Ollama (`llama3.2`)
 - **PDF Processing**: PyMuPDF
 
 ## Future Release
